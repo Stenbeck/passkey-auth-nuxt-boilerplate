@@ -5,6 +5,7 @@ const LoginLogSchema = new mongoose.Schema(
 		userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 		ip: { type: String },
 		userAgent: { type: String },
+		device: { type: String },
 		method: { type: String, default: 'unknown' },
 	},
 	{ timestamps: true }

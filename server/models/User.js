@@ -7,7 +7,7 @@ const CredentialSchema = new mongoose.Schema(
 		counter: { type: Number, required: true },
 		challenge: { type: String },
 		transports: [String],
-		deviceName: { type: String, default: 'First device', trim: true },
+		deviceName: { type: String, default: 'Default device', trim: true },
 	},
 	{ _id: false, timestamps: true }
 )

@@ -64,6 +64,7 @@ export default defineEventHandler(async (event) => {
 			ip: getRequestIP(event),
 			userAgent: getHeader(event, 'user-agent'),
 			method: 'passkey',
+			device: cred.deviceName || 'Unknown device',
 		})
 
 		// Generate JWT token for authenticated user

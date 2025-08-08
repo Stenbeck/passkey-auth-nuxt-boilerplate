@@ -17,8 +17,9 @@
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
 
-const isLoading = ref()
 const auth = useAuthStore()
+
+const isLoading = ref()
 const loginEmail = ref('')
 const error = ref('')
 const reg =

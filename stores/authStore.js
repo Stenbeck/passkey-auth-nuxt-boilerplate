@@ -18,10 +18,16 @@ export const useAuthStore = defineStore('auth', () => {
 	}
 
 	const registerPasskey = async ({ email, firstName, lastName }) => {
-		const options = await $fetch('/api/auth/passkey/registerRequest', {
+		const res = await $fetch('/api/auth/passkey/registerRequest', {
 			method: 'POST',
-			body: { email, firstName, lastName },
+			body: { email },
 		})
+
+		if (res.success === false || !res.options) {
+			return { success: false, message: res.message || 'Failed to initiate registration' }
+		}
+
+		const { options } = res
 
 		options.challenge = Uint8Array.from(atob(base64urlToBase64(options.challenge)), (c) => c.charCodeAt(0)).buffer
 		options.user.id = Uint8Array.from(atob(base64urlToBase64(options.user.id)), (c) => c.charCodeAt(0)).buffer
@@ -120,6 +126,70 @@ export const useAuthStore = defineStore('auth', () => {
 		setUser(response.user)
 	}
 
+	const addNewPasskey = async (deviceName) => {
+		try {
+			// 1) Request registration options (requires auth cookie)
+			const res = await $fetch('/api/auth/passkey/addNewPasskeyRequest', {
+				method: 'POST',
+				credentials: 'include',
+			})
+
+			const { options } = res
+
+			if (!options || options.success === false) {
+				return { success: false, message: options?.message || 'Failed to start add-passkey flow' }
+			}
+
+			// Normalize challenge
+			options.challenge = Uint8Array.from(atob(base64urlToBase64(options.challenge)), (c) => c.charCodeAt(0)).buffer
+
+			// Normalize user.id if present (depends on server shape)
+			if (options.user?.id) {
+				options.user.id = Uint8Array.from(atob(base64urlToBase64(options.user.id)), (c) => c.charCodeAt(0)).buffer
+			}
+
+			// Normalize excludeCredentials[].id (required by WebAuthn API)
+			if (options.excludeCredentials) {
+				options.excludeCredentials = options.excludeCredentials.map((cred) => ({
+					...cred,
+					id: Uint8Array.from(atob(base64urlToBase64(cred.id)), (c) => c.charCodeAt(0)).buffer,
+				}))
+			}
+
+			// 3) Create credential via WebAuthn API
+			const credential = await navigator.credentials.create({
+				publicKey: options,
+			})
+
+			// 4) Normalize result to JSON compatible with your server
+			const credentialJSON = {
+				id: credential.id,
+				type: credential.type,
+				rawId: arrayBufferToBase64url(credential.rawId),
+				response: {
+					attestationObject: arrayBufferToBase64url(credential.response.attestationObject),
+					clientDataJSON: arrayBufferToBase64url(credential.response.clientDataJSON),
+				},
+				clientExtensionResults: credential.getClientExtensionResults?.(),
+			}
+
+			// 5) Send response to server to append the new credential
+			const response = await $fetch('/api/auth/passkey/addNewPasskeyResponse', {
+				method: 'POST',
+				body: { credential: credentialJSON, deviceName },
+				credentials: 'include',
+			})
+
+			if (!response || response.success === false) {
+				return { success: false, message: response?.message || 'Failed to save new passkey' }
+			}
+
+			return { success: true }
+		} catch (e) {
+			return { success: false, message: e?.message || 'Add-passkey failed' }
+		}
+	}
+
 	const logout = async () => {
 		await $fetch('/api/auth/logout', { method: 'POST' })
 		user.value = null
@@ -143,6 +213,7 @@ export const useAuthStore = defineStore('auth', () => {
 		sendLoginLink,
 		verifyLoginLink,
 		verifyEmail,
+		addNewPasskey,
 		setUser,
 		clear,
 	}

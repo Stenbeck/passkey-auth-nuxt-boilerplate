@@ -3,38 +3,36 @@ import { generateRegistrationOptions } from '@simplewebauthn/server'
 export default defineEventHandler(async (event) => {
 	const config = useRuntimeConfig()
 	const body = await readBody(event)
-	const { firstName, lastName, email } = body
-
-	if (
-		!firstName ||
-		typeof firstName !== 'string' ||
-		!firstName.trim() ||
-		!lastName ||
-		typeof lastName !== 'string' ||
-		!lastName.trim() ||
-		!email ||
-		typeof email !== 'string' ||
-		!email.trim()
-	) {
-		throw createError({ statusCode: 400, message: 'Missing or invalid user information' })
-	}
+	const { email } = body
 
 	let options
 	try {
 		// Generate registration options using WebAuthn server library
+		// TODO Potentially flatten the user object to follow the spec more closely
 		options = await generateRegistrationOptions({
 			rpName: config.rpName,
 			rpID: config.rpId,
-			user: {
-				id: Buffer.from(email, 'utf8'),
-				name: firstName,
-				displayName: firstName,
-			},
+			userID: Buffer.from(email, 'utf8'),
+			userName: email,
+			userDisplayName: email, // as seen in authenticator layover
 			attestationType: 'indirect',
 			authenticatorSelection: {
 				userVerification: 'preferred',
 			},
 		})
+		// options = await generateRegistrationOptions({
+		// 	rpName: config.rpName,
+		// 	rpID: config.rpId,
+		// 	user: {
+		// 		id: Buffer.from(email, 'utf8'),
+		// 		name: firstName,
+		// 		displayName: email, // as seen in authenticator layover
+		// 	},
+		// 	attestationType: 'indirect',
+		// 	authenticatorSelection: {
+		// 		userVerification: 'preferred',
+		// 	},
+		// })
 	} catch (err) {
 		console.error('Failed to generate registration options:', err)
 		throw createError({ statusCode: 500, message: 'Failed to generate registration options' })
@@ -63,8 +61,8 @@ export default defineEventHandler(async (event) => {
 		challenge: challengeBase64Url,
 		user: {
 			id: options.user.id.toString('base64url'),
-			name: firstName,
-			displayName: firstName,
+			name: email,
+			displayName: email,
 		},
 		excludeCredentials:
 			options.excludeCredentials?.map((cred) => ({
@@ -73,5 +71,5 @@ export default defineEventHandler(async (event) => {
 			})) || [],
 	}
 
-	return base64Options
+	return { success: true, options: base64Options }
 })
