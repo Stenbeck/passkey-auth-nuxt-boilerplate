@@ -1,0 +1,25 @@
+{
+	"name": "passkey-nuxt-boilerplate-site",
+	"version": "1.0.0",
+	"description": "A Nuxt.js boilerplate for building passkey authentication sites",
+	"author": "Fredrik Stenbeck <fredrik@stenbecklab.com>",
+	"private": true,
+	"license": "MIT",
+	"scripts": {
+		"dev": "nuxt dev",
+		"build": "nuxt build",
+		"preview": "nuxt preview"
+	},
+	"dependencies": {
+		"@nuxtjs/tailwindcss": "^6.10.0",
+		"@pinia/nuxt": "^0.5.1",
+		"@simplewebauthn/server": "^13.1.2",
+		"jsonwebtoken": "^9.0.2",
+		"mongoose": "^8.3.3",
+		"nodemailer": "^7.0.5",
+		"nuxt": "^3.18.0"
+	},
+	"devDependencies": {
+		"@nuxtjs/tailwindcss": "^6.10.0"
+	}
+}
