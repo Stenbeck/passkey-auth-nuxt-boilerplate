@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import nodemailer from 'nodemailer'
 import { connectDB } from '../../../utils/db'
-import { readBody, getCookie } from '#imports'
+import { readBody, getCookie, setCookie } from '#imports'
 import User from '../../../models/User'
 import { verifyRegistrationResponse } from '@simplewebauthn/server'
 
@@ -14,9 +14,10 @@ export default defineEventHandler(async (event) => {
 	const { credential, email, firstName, lastName } = body
 
 	const expectedChallenge = getCookie(event, 'reg_challenge')
+	setCookie(event, 'reg_challenge', '', { maxAge: 0, path: '/' })
 
 	if (!expectedChallenge) {
-		throw createError({ statusCode: 400, statusMessage: 'No registration challenge found' })
+		return { success: false, message: 'No registration challenge found' }
 	}
 
 	// Verify the registration response using WebAuthn
@@ -39,34 +40,41 @@ export default defineEventHandler(async (event) => {
 		})
 	} catch (e) {
 		console.error('Verification error:', e)
-		throw createError({ statusCode: 400, statusMessage: 'Registration verification failed', data: e.message })
+		return { success: false, message: 'Registration verification failed' }
 	}
 
 	if (!verification.verified) {
-		throw createError({ statusCode: 400, statusMessage: 'Registration not verified' })
+		return { success: false, message: 'Registration not verified' }
 	}
 
 	// Create new user or update existing user with credential info
 	let user
 	try {
 		user = await User.findOne({ email })
+		if (user && user.verified) {
+			return { success: false, message: 'User already verified' }
+		}
 		if (!user) {
 			user = new User({
 				firstName,
 				lastName,
 				email,
-				credential: {
-					id: verification.registrationInfo.credential.id.toString('base64url'),
-					publicKey: Buffer.from(verification.registrationInfo.credential.publicKey).toString('base64url'),
-					counter: verification.registrationInfo.credential.counter,
-				},
+				credentials: [
+					{
+						id: verification.registrationInfo.credential.id.toString('base64url'),
+						publicKey: Buffer.from(verification.registrationInfo.credential.publicKey).toString('base64url'),
+						counter: verification.registrationInfo.credential.counter,
+						transports: verification.registrationInfo.credential.transports || [],
+					},
+				],
 			})
 		} else {
-			user.credential = {
+			user.credentials.push({
 				id: verification.registrationInfo.credential.id.toString('base64url'),
 				publicKey: Buffer.from(verification.registrationInfo.credential.publicKey).toString('base64url'),
 				counter: verification.registrationInfo.credential.counter,
-			}
+				transports: verification.registrationInfo.credential.transports || [],
+			})
 		}
 		await user.save()
 		// Create JWT token for verification email link
@@ -96,7 +104,7 @@ export default defineEventHandler(async (event) => {
 		})
 	} catch (e) {
 		console.error('User DB error:', e)
-		throw createError({ statusCode: 500, statusMessage: 'User registration failed' })
+		return { success: false, message: 'User registration failed' }
 	}
 
 	return { success: true }

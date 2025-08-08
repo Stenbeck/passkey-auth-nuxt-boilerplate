@@ -12,13 +12,14 @@ export default defineEventHandler(async (event) => {
 	let user
 	try {
 		user = email ? await User.findOne({ email }).lean() : null
+
 		if (!user) {
 			return { success: false, message: 'User not found' }
 		}
 		if (!user.verified) {
 			return { success: false, message: 'User not verified' }
 		}
-		if (!user.credential?.id) {
+		if (!user.credentials || user.credentials.length === 0) {
 			return { success: false, message: 'No credential registered' }
 		}
 	} catch (e) {
@@ -35,13 +36,10 @@ export default defineEventHandler(async (event) => {
 		options = await generateAuthenticationOptions({
 			rpName: config.rpName,
 			rpID: config.rpId,
-			allowCredentials: [
-				{
-					id: user.credential.id,
-					type: 'public-key',
-					transports: ['usb', 'ble', 'nfc', 'internal'],
-				},
-			],
+			allowCredentials: user.credentials.map((c) => ({
+				id: c.id,
+				type: 'public-key',
+			})),
 			timeout: 60000,
 			userVerification: 'preferred',
 			extensions: undefined,
@@ -49,7 +47,7 @@ export default defineEventHandler(async (event) => {
 
 		// Store the generated challenge on the user for later verification
 		try {
-			await User.findOneAndUpdate({ email }, { 'credential.challenge': options.challenge })
+			await User.updateOne({ email }, { $set: { 'credentials.$[].challenge': options.challenge } })
 		} catch (e) {
 			console.error('Failed to update user challenge:', e)
 			return { success: false, message: 'Failed to update challenge' }

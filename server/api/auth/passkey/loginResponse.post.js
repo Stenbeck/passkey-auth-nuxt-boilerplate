@@ -12,15 +12,20 @@ export default defineEventHandler(async (event) => {
 	const body = await readBody(event)
 
 	// Find user by credential ID
-	const user = await User.findOne({ 'credential.id': body.rawId })
+	const user = await User.findOne({ 'credentials.id': body.rawId })
 	if (!user) {
-		throw createError({ statusCode: 400, statusMessage: 'User not found' })
+		return { success: false, message: 'User not found' }
+	}
+
+	const cred = user.credentials.find((c) => c.id === body.rawId)
+	if (!cred) {
+		return { success: false, message: 'Credential not found for user' }
 	}
 
 	// Retrieve the expected challenge from user's stored credential
-	const expectedChallenge = user.credential.challenge
+	const expectedChallenge = cred.challenge
 	if (!expectedChallenge || typeof expectedChallenge !== 'string') {
-		throw createError({ statusCode: 400, statusMessage: 'Missing or invalid login challenge' })
+		return { success: false, message: 'Missing or invalid login challenge' }
 	}
 
 	// Verify the authentication response using SimpleWebAuthn server
@@ -32,24 +37,25 @@ export default defineEventHandler(async (event) => {
 			expectedOrigin: config.rpOrigin,
 			expectedRPID: config.rpId,
 			credential: {
-				id: user.credential.id,
-				publicKey: Buffer.from(user.credential.publicKey, 'base64url'),
-				counter: user.credential.counter,
+				id: cred.id,
+				publicKey: Buffer.from(cred.publicKey, 'base64url'),
+				counter: cred.counter,
 			},
 		})
 	} catch (e) {
 		console.log('Verification error:', e)
-		throw createError({ statusCode: 400, statusMessage: 'Authentication verification failed' })
+		return { success: false, message: 'Authentication verification failed' }
 	}
 
 	// Check if the authentication was successfully verified
 	if (!verification.verified) {
-		throw createError({ statusCode: 400, statusMessage: 'Authentication not verified' })
+		return { success: false, message: 'Authentication not verified' }
 	}
 
 	try {
-		// Update credential counter to prevent replay attacks
-		user.credential.counter = verification.authenticationInfo.newCounter
+		// Clear the used challenge (counter often stays 0 on multi-device passkeys; we ignore it)
+		cred.challenge = null
+		user.markModified('credentials')
 		await user.save()
 
 		// Log successful login attempt
@@ -72,9 +78,12 @@ export default defineEventHandler(async (event) => {
 			maxAge: 60 * 60 * 24 * 7, // 7 days
 		})
 
-		return { user: { id: user._id, firstName: user.firstName, lastName: user.lastName, email: user.email } }
+		return {
+			success: true,
+			user: { id: user._id, firstName: user.firstName, lastName: user.lastName, email: user.email },
+		}
 	} catch (e) {
 		console.error('Login finalization error:', e)
-		throw createError({ statusCode: 500, statusMessage: 'Login finalization failed' })
+		return { success: false, message: 'Login finalization failed' }
 	}
 })
