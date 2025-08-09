@@ -3,11 +3,12 @@ import { defineStore } from 'pinia'
 export const useAuthStore = defineStore('auth', () => {
 	const user = ref(null)
 
+	// --- Session ---
 	const fetchUser = async () => {
 		const data = await $fetch('/api/auth/me', {
 			credentials: 'include',
 		})
-		user.value = data
+		user.value = data.user
 	}
 
 	const userExists = async (email) => {
@@ -17,6 +18,20 @@ export const useAuthStore = defineStore('auth', () => {
 		return result.success
 	}
 
+	const logout = async () => {
+		await $fetch('/api/auth/logout', { method: 'POST' })
+		user.value = null
+	}
+
+	const setUser = (userData) => {
+		user.value = userData
+	}
+
+	const clear = () => {
+		user.value = null
+	}
+
+	// --- Registration ---
 	const registerPasskey = async ({ email, firstName, lastName }) => {
 		const res = await $fetch('/api/auth/passkey/registerRequest', {
 			method: 'POST',
@@ -68,6 +83,7 @@ export const useAuthStore = defineStore('auth', () => {
 		setUser(response.user)
 	}
 
+	// --- Authentication ---
 	const loginPasskey = async (email) => {
 		const options = await $fetch('/api/auth/passkey/loginRequest', {
 			method: 'POST',
@@ -126,6 +142,7 @@ export const useAuthStore = defineStore('auth', () => {
 		setUser(response.user)
 	}
 
+	// --- Passkey Management ---
 	const addNewPasskey = async (deviceName) => {
 		try {
 			// 1) Request registration options (requires auth cookie)
@@ -136,8 +153,8 @@ export const useAuthStore = defineStore('auth', () => {
 
 			const { options } = res
 
-			if (!options || options.success === false) {
-				return { success: false, message: options?.message || 'Failed to start add-passkey flow' }
+			if (res.success === false || !options) {
+				return { success: false, message: res?.message || 'Failed to start add-passkey flow' }
 			}
 
 			// Normalize challenge
@@ -190,17 +207,33 @@ export const useAuthStore = defineStore('auth', () => {
 		}
 	}
 
-	const logout = async () => {
-		await $fetch('/api/auth/logout', { method: 'POST' })
-		user.value = null
+	const getPasskeys = async () => {
+		try {
+			const response = await $fetch('/api/auth/passkey/passkeys', { credentials: 'include' })
+			if (!response || response.success === false) {
+				return { success: false, message: response?.message || 'Failed to fetch passkeys' }
+			}
+			return { success: true, passkeys: res.passkeys || [] }
+		} catch (e) {
+			return { success: false, message: 'Failed to fetch passkeys' }
+		}
 	}
 
-	const setUser = (userData) => {
-		user.value = userData
-	}
-
-	const clear = () => {
-		user.value = null
+	const deletePasskey = async (id) => {
+		if (!id) return { success: false, message: 'Missing passkey id' }
+		try {
+			const response = await $fetch('/api/auth/passkey/remove', {
+				method: 'POST',
+				body: { id },
+				credentials: 'include',
+			})
+			if (!response || response.success === false) {
+				return { success: false, message: res?.message || 'Failed to delete passkey' }
+			}
+			return { success: true }
+		} catch (e) {
+			return { success: false, message: 'Failed to delete passkey' }
+		}
 	}
 
 	return {
@@ -214,6 +247,8 @@ export const useAuthStore = defineStore('auth', () => {
 		verifyLoginLink,
 		verifyEmail,
 		addNewPasskey,
+		getPasskeys,
+		deletePasskey,
 		setUser,
 		clear,
 	}
