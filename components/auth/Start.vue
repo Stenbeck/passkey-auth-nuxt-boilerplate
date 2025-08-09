@@ -25,9 +25,13 @@ const auth = useAuthStore()
 
 const currentView = ref('login') // 'login' | 'register' | 'magic'
 
-onMounted(() => {
+onMounted(async () => {
+	// Ensure store is hydrated before deciding; avoids missing redirect on reload
+	if (!auth.user) {
+		await auth.fetchUser()
+	}
 	if (auth.user) {
-		navigateTo('/dashboard')
+		navigateTo('/dashboard', { replace: true })
 	}
 })
 </script>
