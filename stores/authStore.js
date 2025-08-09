@@ -213,7 +213,7 @@ export const useAuthStore = defineStore('auth', () => {
 			if (!response || response.success === false) {
 				return { success: false, message: response?.message || 'Failed to fetch passkeys' }
 			}
-			return { success: true, passkeys: res.passkeys || [] }
+			return { success: true, passkeys: response.passkeys || [] }
 		} catch (e) {
 			return { success: false, message: 'Failed to fetch passkeys' }
 		}
@@ -222,11 +222,11 @@ export const useAuthStore = defineStore('auth', () => {
 	const deletePasskey = async (id) => {
 		if (!id) return { success: false, message: 'Missing passkey id' }
 		try {
-			const response = await $fetch('/api/auth/passkey/remove', {
-				method: 'POST',
-				body: { id },
+			const response = await $fetch(`/api/auth/passkey/${id}`, {
+				method: 'DELETE',
 				credentials: 'include',
 			})
+
 			if (!response || response.success === false) {
 				return { success: false, message: res?.message || 'Failed to delete passkey' }
 			}

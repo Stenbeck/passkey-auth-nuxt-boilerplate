@@ -2,6 +2,7 @@ import User from '../../../models/User'
 
 export default defineEventHandler(async (event) => {
 	const authUser = event.context.user
+
 	if (!authUser) return { success: false, message: 'Not authenticated' }
 
 	try {

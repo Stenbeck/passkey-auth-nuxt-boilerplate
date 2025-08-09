@@ -1,15 +1,32 @@
 <template>
-	<div class="min-h-screen flex items-center justify-center">
+	<div class="absolute top-0 right-0 pt-2 pr-2">
+		<button
+			@click="close"
+			type="button"
+			class="rounded-md border bg-white text-gray-500 hover:text-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-hidden">
+			<span class="sr-only">Close</span>
+			<svg
+				class="size-6"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke-width="1"
+				stroke="currentColor"
+				aria-hidden="true"
+				data-slot="icon">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+			</svg>
+		</button>
+	</div>
+	<div class="flex items-center justify-center">
 		<div class="text-center w-full max-w-sm space-y-2">
-			<h1 class="mb-6 text-2xl font-bold">Add new passkey</h1>
+			<h1 class="mb-2 text-2xl font-bold">Add new passkey</h1>
+			<div class="pb-6 text-gray-600">Register an additional personal passkey.</div>
 
 			<input
 				v-model.trim="deviceName"
 				type="text"
-				placeholder="Optional device name (e.g., iPhone 15)"
+				placeholder="Device name (e.g. My foldable iPhone19)"
 				class="border p-2 w-full rounded" />
-
-			<div class="text-sm text-gray-600">This will register an additional passkey for your account.</div>
 
 			<div class="space-y-2">
 				<button
@@ -34,10 +51,16 @@ import { useAuthStore } from '@/stores/authStore'
 
 const auth = useAuthStore()
 
+const show = defineModel()
+
 const deviceName = ref('')
 const isLoading = ref(false)
 const error = ref('')
 const message = ref('')
+
+const close = () => {
+	show.value = false
+}
 
 const addNewPasskey = async () => {
 	error.value = ''
@@ -61,6 +84,7 @@ const addNewPasskey = async () => {
 		message.value = 'New passkey registered successfully.'
 		deviceName.value = ''
 		isLoading.value = false
+		show.value = false
 	} catch (e) {
 		isLoading.value = false
 		error.value = e?.message || 'Failed to add new passkey'

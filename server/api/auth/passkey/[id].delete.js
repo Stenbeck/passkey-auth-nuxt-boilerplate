@@ -1,12 +1,11 @@
-import { readBody, getRequestIP, getHeader } from '#imports'
+import { getRequestIP, getHeader } from '#imports'
 import User from '../../../models/User'
 import LoginLog from '../../../models/LoginLog'
 
 export default defineEventHandler(async (event) => {
 	const authUser = event.context.user
 
-	const body = await readBody(event)
-	const id = body.id
+	const id = event.context.params?.id
 
 	if (!id) {
 		return { success: false, message: 'Missing passkey id' }
