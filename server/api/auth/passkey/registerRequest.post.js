@@ -20,27 +20,14 @@ export default defineEventHandler(async (event) => {
 				userVerification: 'preferred',
 			},
 		})
-		// options = await generateRegistrationOptions({
-		// 	rpName: config.rpName,
-		// 	rpID: config.rpId,
-		// 	user: {
-		// 		id: Buffer.from(email, 'utf8'),
-		// 		name: firstName,
-		// 		displayName: email, // as seen in authenticator layover
-		// 	},
-		// 	attestationType: 'indirect',
-		// 	authenticatorSelection: {
-		// 		userVerification: 'preferred',
-		// 	},
-		// })
 	} catch (err) {
 		console.error('Failed to generate registration options:', err)
-		throw createError({ statusCode: 500, message: 'Failed to generate registration options' })
+		return { success: false, message: 'Failed to generate registration options' }
 	}
 
 	// Ensure the challenge was generated
 	if (!options.challenge) {
-		throw createError({ statusCode: 500, message: 'Challenge was not generated' })
+		return { success: false, message: 'Challenge was not generated' }
 	}
 
 	// Store challenge in HTTP-only cookie for later verification
