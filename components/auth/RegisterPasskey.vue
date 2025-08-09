@@ -1,14 +1,14 @@
 <template>
 	<div>
 		<div class="space-y-2">
-			<input v-model="firstName" type="text" placeholder="Enter first name" class="border p-2 w-full" />
-			<input v-model="lastName" type="text" placeholder="Enter last name" class="border p-2 w-full" />
-			<input v-model="email" type="email" placeholder="Enter email" class="border p-2 w-full" />
+			<input v-model="firstName" type="text" placeholder="Enter first name" class="border text-sm p-1.5 w-full" />
+			<input v-model="lastName" type="text" placeholder="Enter last name" class="border p-1.5 w-full" />
+			<input v-model="email" type="email" placeholder="Enter email" class="border p-1.5 w-full" />
 			<button
 				type="button"
 				@click="checkEmail"
 				:disabled="isLoading"
-				class="bg-gray-900 text-white px-4 py-2 w-full rounded flex items-center justify-center gap-2">
+				class="bg-gray-900 text-sm text-white px-3 py-2 w-full rounded flex items-center justify-center gap-2">
 				<UtilsLoadingSpinner v-if="isLoading" class="w-4 h-4" />
 				<span>{{ isLoading ? 'Setting things up...' : 'Register with Passkey' }}</span>
 			</button>

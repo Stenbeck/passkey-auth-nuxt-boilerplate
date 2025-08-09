@@ -19,21 +19,21 @@
 	</div>
 	<div class="flex items-center justify-center">
 		<div class="text-center w-full max-w-sm space-y-2">
-			<h1 class="mb-2 text-2xl font-bold">Add new passkey</h1>
-			<div class="pb-6 text-gray-600">Register an additional personal passkey.</div>
+			<h1 class="text-base font-semibold text-gray-900">Add new passkey</h1>
+			<div class="pb-4 text-sm text-gray-700">Register an additional personal passkey.</div>
 
 			<input
 				v-model.trim="deviceName"
 				type="text"
 				placeholder="Device name (e.g. My foldable iPhone19)"
-				class="border p-2 w-full rounded" />
+				class="text-sm border p-1.5 w-full rounded" />
 
 			<div class="space-y-2">
 				<button
 					type="button"
 					@click="addNewPasskey"
 					:disabled="isLoading"
-					class="bg-gray-900 text-white px-4 py-2 w-full rounded flex items-center justify-center gap-2">
+					class="text-sm bg-gray-900 text-white px-3 py-2 w-full rounded flex items-center justify-center gap-2">
 					<UtilsLoadingSpinner v-if="isLoading" class="w-4 h-4" />
 					<span>{{ isLoading ? 'Registering…' : 'Add New Passkey' }}</span>
 				</button>

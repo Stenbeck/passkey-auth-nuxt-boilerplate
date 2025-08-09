@@ -4,14 +4,19 @@
 			<div class="sm:flex-auto sm:items-center">
 				<h1 class="text-base font-semibold text-gray-900">Passkey Management</h1>
 				<p class="mt-2 text-sm text-gray-700">
-					Manage your Passkeys here. Add new ones, remove not used ones or simply know what passkeys you have.
+					Manage your Passkeys here. Add new ones, remove not used ones or simply know what passkeys you have. Next
+					might be to go to
+					<NuxtLink to="/dashboard" class="underline underline-offset-4 hover:no-underline">dashboard</NuxtLink>
+					or
+					<span class="underline underline-offset-4 cursor-pointer hover:no-underline" @click="logout">logout</span>
+					.
 				</p>
 			</div>
 			<div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
 				<button
 					@click="openAddNewPasskey"
 					type="button"
-					class="block rounded-md bg-gray-900 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-700">
+					class="block rounded-md bg-gray-900 px-3 py-2 text-center text-sm text-white shadow-xs hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-700">
 					Add new passkey
 				</button>
 			</div>

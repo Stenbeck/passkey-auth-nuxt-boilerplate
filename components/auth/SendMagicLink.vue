@@ -1,12 +1,16 @@
 <template>
 	<div>
 		<div class="space-y-2">
-			<input v-model="email" type="email" placeholder="Enter email for secure link" class="border p-2 w-full" />
+			<input
+				v-model="email"
+				type="email"
+				placeholder="Enter email for secure link"
+				class="border text-sm p-1.5 w-full" />
 			<button
 				type="button"
 				@click="sendLink"
 				:disabled="isLoading"
-				class="bg-gray-900 text-white px-4 py-2 w-full rounded flex items-center justify-center gap-2">
+				class="bg-gray-900 text-sm text-white px-3 py-2 w-full rounded flex items-center justify-center gap-2">
 				<UtilsLoadingSpinner v-if="isLoading" class="w-4 h-4" />
 				<span>{{ isLoading ? 'Preparing magic link...' : 'Send Magic Link' }}</span>
 			</button>
