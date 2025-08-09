@@ -1,4 +1,3 @@
-import { connectDB } from '../../../utils/db'
 import { setCookie, readBody, getRequestIP, getHeader } from '#imports'
 import { verifyAuthenticationResponse } from '@simplewebauthn/server'
 import jwt from 'jsonwebtoken'
@@ -6,26 +5,21 @@ import User from '../../../models/User'
 import LoginLog from '../../../models/LoginLog'
 
 export default defineEventHandler(async (event) => {
-	await connectDB()
 	const config = useRuntimeConfig()
 
 	const body = await readBody(event)
 
 	// Find user by credential ID
 	const user = await User.findOne({ 'credentials.id': body.rawId })
-	if (!user) {
-		return { success: false, message: 'User not found' }
-	}
+	if (!user) return { success: false, message: 'Authentication failed' }
 
 	const cred = user.credentials.find((c) => c.id === body.rawId)
-	if (!cred) {
-		return { success: false, message: 'Credential not found for user' }
-	}
+	if (!cred) return { success: false, message: 'Authentication failed' }
 
 	// Retrieve the expected challenge from user's stored credential
 	const expectedChallenge = cred.challenge
 	if (!expectedChallenge || typeof expectedChallenge !== 'string') {
-		return { success: false, message: 'Missing or invalid login challenge' }
+		return { success: false, message: 'Authentication failed' }
 	}
 
 	// Verify the authentication response using SimpleWebAuthn server
@@ -42,14 +36,11 @@ export default defineEventHandler(async (event) => {
 				counter: cred.counter,
 			},
 		})
-	} catch (e) {
-		console.log('Verification error:', e)
-		return { success: false, message: 'Authentication verification failed' }
+	} catch {
+		return { success: false, message: 'Authentication failed' }
 	}
-
-	// Check if the authentication was successfully verified
 	if (!verification.verified) {
-		return { success: false, message: 'Authentication not verified' }
+		return { success: false, message: 'Authentication failed' }
 	}
 
 	try {

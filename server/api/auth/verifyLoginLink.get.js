@@ -1,11 +1,9 @@
 import jwt from 'jsonwebtoken'
 import { getQuery, setCookie, getRequestIP, getHeader } from '#imports'
-import { connectDB } from '../../utils/db'
 import User from '../../models/User'
 import LoginLog from '../../models/LoginLog'
 
 export default defineEventHandler(async (event) => {
-	await connectDB()
 	const config = useRuntimeConfig()
 
 	// Extract the token from the query string
@@ -17,8 +15,9 @@ export default defineEventHandler(async (event) => {
 	try {
 		payload = jwt.verify(token, config.loginTokenSecret)
 	} catch {
-		throw createError({ statusCode: 401, statusMessage: 'Invalid or expired token' })
+		return { success: false, message: 'Invalid or expired token' }
 	}
+	if (!user) return { success: false, message: 'Invalid or expired token' }
 
 	const user = await User.findById(payload.id)
 	if (!user) throw createError({ statusCode: 404, statusMessage: 'User not found' })

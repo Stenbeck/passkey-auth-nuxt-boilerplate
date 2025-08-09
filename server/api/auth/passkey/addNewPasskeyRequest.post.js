@@ -1,11 +1,9 @@
 import jwt from 'jsonwebtoken'
-import { connectDB } from '../../../utils/db'
 import { generateRegistrationOptions } from '@simplewebauthn/server'
 import User from '../../../models/User'
 import { getCookie, setCookie } from '#imports'
 
 export default defineEventHandler(async (event) => {
-	await connectDB()
 	const config = useRuntimeConfig()
 	const token = getCookie(event, 'token')
 

@@ -1,12 +1,10 @@
 import jwt from 'jsonwebtoken'
-import { connectDB } from '../../../utils/db'
 import { verifyRegistrationResponse } from '@simplewebauthn/server'
 import { readBody, getCookie, setCookie, getHeader } from '#imports'
 import User from '../../../models/User'
 import LoginLog from '../../../models/LoginLog'
 
 export default defineEventHandler(async (event) => {
-	await connectDB()
 	const config = useRuntimeConfig()
 
 	// Require authenticated session (JWT in cookie)

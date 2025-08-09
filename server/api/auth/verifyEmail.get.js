@@ -1,11 +1,9 @@
 import jwt from 'jsonwebtoken'
 import { getQuery, setCookie, getRequestIP, getHeader } from '#imports'
-import { connectDB } from '../../utils/db'
 import User from '../../models/User'
 import LoginLog from '../../models/LoginLog'
 
 export default defineEventHandler(async (event) => {
-	await connectDB()
 	const config = useRuntimeConfig()
 	try {
 		const { token } = getQuery(event)

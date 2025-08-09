@@ -1,10 +1,7 @@
 import { getQuery } from '#imports'
-import { connectDB } from '../../utils/db'
 import User from '../../models/User'
 
 export default defineEventHandler(async (event) => {
-	await connectDB()
-
 	try {
 		const { email } = getQuery(event)
 		if (!email) {

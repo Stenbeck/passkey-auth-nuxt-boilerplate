@@ -2,11 +2,9 @@ import jwt from 'jsonwebtoken'
 import nodemailer from 'nodemailer'
 import { readBody } from '#imports'
 import { useStorage } from '#internal/nitro'
-import { connectDB } from '../../utils/db'
 import User from '../../models/User'
 
 export default defineEventHandler(async (event) => {
-	await connectDB()
 	const config = useRuntimeConfig()
 
 	const body = await readBody(event)
@@ -60,7 +58,6 @@ export default defineEventHandler(async (event) => {
 
 		return { success: true }
 	} catch (err) {
-		console.error('Login link error:', err)
 		return { success: false, message: 'Failed to send login link' }
 	}
 })

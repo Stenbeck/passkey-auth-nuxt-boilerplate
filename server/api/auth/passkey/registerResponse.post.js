@@ -1,12 +1,10 @@
 import jwt from 'jsonwebtoken'
 import nodemailer from 'nodemailer'
-import { connectDB } from '../../../utils/db'
 import { readBody, getCookie, setCookie } from '#imports'
 import User from '../../../models/User'
 import { verifyRegistrationResponse } from '@simplewebauthn/server'
 
 export default defineEventHandler(async (event) => {
-	await connectDB()
 	const config = useRuntimeConfig()
 
 	// Extract body and required cookie

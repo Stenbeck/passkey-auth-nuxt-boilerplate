@@ -1,9 +1,7 @@
 import { generateAuthenticationOptions } from '@simplewebauthn/server'
-import { connectDB } from '../../../utils/db'
 import User from '../../../models/User'
 
 export default defineEventHandler(async (event) => {
-	await connectDB()
 	const config = useRuntimeConfig()
 
 	const body = await readBody(event)
@@ -13,14 +11,16 @@ export default defineEventHandler(async (event) => {
 	try {
 		user = email ? await User.findOne({ email }).lean() : null
 
-		if (!user) {
-			return { success: false, message: 'User not found' }
-		}
-		if (!user.verified) {
-			return { success: false, message: 'User not verified' }
-		}
-		if (!user.credentials || user.credentials.length === 0) {
-			return { success: false, message: 'No credential registered' }
+		if (!user || !Array.isArray(user.credentials) || user.credentials.length === 0) {
+			// returnera samma neutrala svar
+			return {
+				success: true,
+				options: await generateAuthenticationOptions({
+					rpID: config.rpId,
+					userVerification: 'preferred',
+					allowCredentials: [], // låt browser faila snyggt
+				}),
+			}
 		}
 	} catch (e) {
 		console.error('User validation failed:', e)
