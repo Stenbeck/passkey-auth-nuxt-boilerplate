@@ -1,10 +1,12 @@
 <template>
 	<div class="min-h-screen flex items-center justify-center">
-		<p v-if="error" class="text-red-600">{{ error }}</p>
-		<p v-else-if="verified" class="text-gray-900">
-			Email verified successfully! You are now logged in and will be redirected in 5 seconds.
-		</p>
-		<p v-else class="text-gray-600">Verifying...</p>
+		<div class="text-center w-full max-w-sm">
+			<p v-if="error" class="text-red-600">{{ error }}</p>
+			<p v-else-if="verified" class="text-gray-900">
+				Email verified successfully! You are now logged in and will be redirected in 5 seconds.
+			</p>
+			<p v-else class="text-gray-600">Verifying...</p>
+		</div>
 	</div>
 </template>
 
