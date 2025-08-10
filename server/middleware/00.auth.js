@@ -6,6 +6,8 @@ export default defineEventHandler(async (event) => {
 	const config = useRuntimeConfig()
 
 	const token = getCookie(event, 'token')
+	// TEMP: minimal debug
+	console.log('[00.auth] hasToken=', !!token, 'path=', event.path, 'ua=', getHeader(event, 'user-agent'))
 
 	if (!token) {
 		event.context.auth = { status: 'no_token' }
