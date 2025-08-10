@@ -37,16 +37,16 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
+import { useCookie } from '#app' // Nuxt composable
 
 const auth = useAuthStore()
-
 const currentView = ref('login') // 'login' | 'register' | 'magic'
 
 onMounted(async () => {
-	// Ensure store is hydrated before deciding; avoids missing redirect on reload
-	if (!auth.user) {
+	const token = useCookie('token').value
+	if (token && !auth.user) {
 		await auth.fetchUser()
 	}
 	if (auth.user) {
