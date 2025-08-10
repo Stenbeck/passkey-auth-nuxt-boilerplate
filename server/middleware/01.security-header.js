@@ -24,8 +24,8 @@ export default defineEventHandler((event) => {
 	// Enforces HTTPS in production for 2 years, includes subdomains, and allows preloading
 
 	const csp = isProd
-		? "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:"
-		: "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:"
+		? "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'"
+		: "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'"
 
 	setHeader(event, 'Content-Security-Policy', csp)
 	// Sets stricter policy in production, more lenient in development
