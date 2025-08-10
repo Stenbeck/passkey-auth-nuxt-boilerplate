@@ -18,43 +18,42 @@ export default defineNuxtConfig({
 	},
 	ssr: true,
 	app: {
-		htmlAttrs: {
-			lang: 'en',
-		},
 		head: {
+			htmlAttrs: { lang: 'en' },
 			title: 'Passkey Boilerplate — Secure Nuxt 3 Starter',
+			meta: [
+				{ charset: 'utf-8' },
+				{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
+				{
+					name: 'description',
+					content:
+						'Secure and modern passkey authentication boilerplate built with Nuxt 3, MongoDB, and Tailwind CSS — perfect for starting secure web projects.',
+				},
+				{
+					name: 'keywords',
+					content: 'passkey, nuxt 3, boilerplate, mongodb, tailwindcss, authentication, webauthn, security',
+				},
+				{ name: 'author', content: 'Fredrik Stenbeck' },
+				{ name: 'robots', content: 'index, follow' },
+				// Open Graph
+				{ property: 'og:title', content: 'Passkey Boilerplate — Secure Nuxt 3 Starter' },
+				{
+					property: 'og:description',
+					content: 'A secure Nuxt 3 boilerplate with passkey authentication, MongoDB, and Tailwind CSS.',
+				},
+				{ property: 'og:image', content: 'https://passkey.stenbecklab.com/social-preview.jpg' },
+				{ property: 'og:url', content: 'https://passkey.stenbecklab.com' },
+				{ property: 'og:type', content: 'website' },
+				// Twitter Card
+				{ name: 'twitter:card', content: 'summary_large_image' },
+				{ name: 'twitter:title', content: 'Passkey Boilerplate — Secure Nuxt 3 Starter' },
+				{
+					name: 'twitter:description',
+					content: 'A secure Nuxt 3 boilerplate with passkey authentication, MongoDB, and Tailwind CSS.',
+				},
+				{ name: 'twitter:image', content: 'https://passkey.stenbecklab.com/social-preview.jpg' },
+			],
+			link: [{ rel: 'canonical', href: 'https://passkey.stenbecklab.com' }],
 		},
-		meta: [
-			{ charset: 'utf-8' },
-			{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
-			{
-				name: 'description',
-				content:
-					'Secure and modern passkey authentication boilerplate built with Nuxt 3, MongoDB, and Tailwind CSS — perfect for starting secure web projects.',
-			},
-			{
-				name: 'keywords',
-				content: 'passkey, nuxt 3, boilerplate, mongodb, tailwindcss, authentication, webauthn, security',
-			},
-			{ name: 'author', content: 'Fredrik Stenbeck' },
-			{ name: 'robots', content: 'index, follow' },
-			// Open Graph
-			{ property: 'og:title', content: 'Passkey Boilerplate — Secure Nuxt 3 Starter' },
-			{
-				property: 'og:description',
-				content: 'A secure Nuxt 3 boilerplate with passkey authentication, MongoDB, and Tailwind CSS.',
-			},
-			{ property: 'og:image', content: 'https://passkey.stenbecklab.com/social-preview.jpg' },
-			{ property: 'og:url', content: 'https://passkey.stenbecklab.com' },
-			{ property: 'og:type', content: 'website' },
-			// Twitter Card
-			{ name: 'twitter:card', content: 'summary_large_image' },
-			{ name: 'twitter:title', content: 'Passkey Boilerplate — Secure Nuxt 3 Starter' },
-			{
-				name: 'twitter:description',
-				content: 'A secure Nuxt 3 boilerplate with passkey authentication, MongoDB, and Tailwind CSS.',
-			},
-			{ name: 'twitter:image', content: 'https://passkey.stenbecklab.com/social-preview.jpg' },
-		],
 	},
 })
