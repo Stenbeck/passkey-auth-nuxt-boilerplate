@@ -5,7 +5,9 @@ import { getCookie, setCookie } from '#imports'
 
 export default defineEventHandler(async (event) => {
 	const config = useRuntimeConfig()
-	const token = getCookie(event, 'token')
+	const isProd = process.env.NODE_ENV === 'production'
+	const cookieName = isProd ? '__Host-token' : 'token'
+	const token = getCookie(event, cookieName)
 
 	if (!token) {
 		return { success: false, message: 'Not authenticated' }

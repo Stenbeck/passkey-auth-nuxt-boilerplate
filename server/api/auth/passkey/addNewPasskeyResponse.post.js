@@ -8,7 +8,9 @@ export default defineEventHandler(async (event) => {
 	const config = useRuntimeConfig()
 
 	// Require authenticated session (JWT in cookie)
-	const token = getCookie(event, 'token')
+	const isProd = process.env.NODE_ENV === 'production'
+	const cookieName = isProd ? '__Host-token' : 'token'
+	const token = getCookie(event, cookieName)
 	if (!token) {
 		return { success: false, message: 'Not authenticated' }
 	}
