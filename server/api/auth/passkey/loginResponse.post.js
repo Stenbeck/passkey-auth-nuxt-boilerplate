@@ -61,12 +61,15 @@ export default defineEventHandler(async (event) => {
 		// Generate JWT token for authenticated user
 		const token = jwt.sign({ id: user._id }, config.loginTokenSecret, { expiresIn: '7d' })
 
-		// Set the token as an HTTP-only cookie
-		setCookie(event, 'token', token, {
+		// Set the token as an HTTP-only cookie (consistent style with verify files)
+		const isProd = process.env.NODE_ENV === 'production'
+		const cookieName = isProd ? '__Host-token' : 'token'
+
+		setCookie(event, cookieName, token, {
 			httpOnly: true,
 			sameSite: 'lax',
 			path: '/',
-			secure: process.env.NODE_ENV === 'production',
+			secure: isProd,
 			maxAge: 60 * 60 * 24 * 7, // 7 days
 		})
 

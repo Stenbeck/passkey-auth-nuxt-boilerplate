@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
 
 	// Extract the token from the query string
 	const { token } = getQuery(event)
-	if (!token) throw createError({ statusCode: 400, statusMessage: 'Missing token' })
+	if (!token) return { success: false, message: 'Missing token' }
 
 	// Verify the token and decode the payload
 	let payload
@@ -17,19 +17,21 @@ export default defineEventHandler(async (event) => {
 	} catch {
 		return { success: false, message: 'Invalid or expired token' }
 	}
-	if (!user) return { success: false, message: 'Invalid or expired token' }
 
 	const user = await User.findById(payload.id)
-	if (!user) throw createError({ statusCode: 404, statusMessage: 'User not found' })
+	if (!user) return { success: false, message: 'User not found' }
 
 	// Issue a new JWT token and set it as a cookie
 	const newToken = jwt.sign({ id: user._id }, config.loginTokenSecret, { expiresIn: '7d' })
 
-	setCookie(event, 'token', newToken, {
+	const isProd = process.env.NODE_ENV === 'production'
+	const cookieName = isProd ? '__Host-token' : 'token'
+
+	setCookie(event, cookieName, newToken, {
 		httpOnly: true,
 		sameSite: 'lax',
 		path: '/',
-		secure: process.env.NODE_ENV === 'production',
+		secure: isProd, // __Host- requires Secure in prod
 		maxAge: 60 * 60 * 24 * 7, // 7 days
 	})
 
