@@ -31,7 +31,7 @@ export default defineEventHandler((event) => {
 
 	// Config
 	const windowMs = 60_000 // 1 minute
-	const maxRequests = 5 // 5 requests per window per IP
+	const maxRequests = 20 // 20 requests per window per IP
 
 	const entry = ipStore.get(ip) || { count: 0, firstRequestTime: now }
 
