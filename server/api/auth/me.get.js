@@ -1,3 +1,7 @@
-export default defineEventHandler(async (event) => {
-	return { success: true, user: event.context.user }
+export default defineEventHandler((event) => {
+	const user = event.context.user
+	if (!user) {
+		return { success: false, authenticated: false }
+	}
+	return { success: true, authenticated: true, user: user }
 })
