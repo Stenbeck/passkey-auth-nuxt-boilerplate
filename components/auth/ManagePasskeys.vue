@@ -127,6 +127,11 @@ const deletePasskey = async (passkeyId) => {
 	}
 }
 
+const logout = async () => {
+	await auth.logout()
+	navigateTo('/')
+}
+
 onMounted(() => {
 	getPasskeys()
 })
