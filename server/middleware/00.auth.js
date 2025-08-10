@@ -1,13 +1,11 @@
 import jwt from 'jsonwebtoken'
-import { getCookie, setCookie, getHeader } from '#imports'
+import { getCookie, setCookie } from '#imports'
 import User from '../models/User'
 
 export default defineEventHandler(async (event) => {
 	const config = useRuntimeConfig()
 
 	const token = getCookie(event, 'token')
-	// TEMP: minimal debug
-	console.log('[00.auth] hasToken=', !!token, 'path=', event.path, 'ua=', getHeader(event, 'user-agent'))
 
 	if (!token) {
 		event.context.auth = { status: 'no_token' }
@@ -25,13 +23,11 @@ export default defineEventHandler(async (event) => {
 			event.context.auth = { status: 'user_missing' }
 			return
 		}
-		console.log('User exists, adding user to event.context.user')
 
 		event.context.user = user
 		event.context.auth = { status: 'ok' }
 	} catch (e) {
 		// Not valid or expired token, clear cookie
-		console.log('ERROR, clear cookie')
 		setCookie(event, 'token', '', { maxAge: 0, path: '/' })
 		const status = e?.name === 'TokenExpiredError' ? 'expired' : 'invalid'
 		event.context.auth = { status }
