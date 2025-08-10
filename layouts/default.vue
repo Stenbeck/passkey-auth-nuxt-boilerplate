@@ -22,10 +22,12 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
+import { useCookie } from '#app'
 
 const auth = useAuthStore()
 
 onMounted(() => {
-	auth.fetchUser()
+	const token = useCookie('token')
+	if (token.value && !auth.user) auth.fetchUser()
 })
 </script>

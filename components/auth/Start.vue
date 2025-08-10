@@ -45,10 +45,6 @@ const auth = useAuthStore()
 const currentView = ref('login') // 'login' | 'register' | 'magic'
 
 onMounted(async () => {
-	const token = useCookie('token').value
-	if (token && !auth.user) {
-		await auth.fetchUser()
-	}
 	if (auth.user) {
 		navigateTo('/dashboard', { replace: true })
 	}
