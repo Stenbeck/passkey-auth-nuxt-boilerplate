@@ -27,7 +27,10 @@ import { useCookie } from '#app'
 const auth = useAuthStore()
 
 onMounted(() => {
-	const token = useCookie('token')
+	const isProd = process.env.NODE_ENV === 'production'
+	const cookieName = isProd ? '__Host-token' : 'token'
+
+	const token = useCookie(cookieName)
 	if (token.value && !auth.user) auth.fetchUser()
 })
 </script>

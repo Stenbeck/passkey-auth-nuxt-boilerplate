@@ -5,7 +5,9 @@ import User from '../models/User'
 export default defineEventHandler(async (event) => {
 	const config = useRuntimeConfig()
 
-	const token = getCookie(event, 'token')
+	const isProd = process.env.NODE_ENV === 'production'
+	const cookieName = isProd ? '__Host-token' : 'token'
+	const token = getCookie(event, cookieName)
 
 	if (!token) {
 		event.context.auth = { status: 'no_token' }
@@ -19,7 +21,14 @@ export default defineEventHandler(async (event) => {
 			// if token points to user that does not exist, clear cookie
 			console.log('No user, clear cookie')
 
-			setCookie(event, 'token', '', { maxAge: 0, path: '/' })
+			setCookie(event, cookieName, '', {
+				httpOnly: true,
+				sameSite: 'lax',
+				path: '/',
+				secure: isProd,
+				maxAge: 0,
+				expires: new Date(0),
+			})
 			event.context.auth = { status: 'user_missing' }
 			return
 		}
@@ -28,7 +37,14 @@ export default defineEventHandler(async (event) => {
 		event.context.auth = { status: 'ok' }
 	} catch (e) {
 		// Not valid or expired token, clear cookie
-		setCookie(event, 'token', '', { maxAge: 0, path: '/' })
+		setCookie(event, cookieName, '', {
+			httpOnly: true,
+			sameSite: 'lax',
+			path: '/',
+			secure: isProd,
+			maxAge: 0,
+			expires: new Date(0),
+		})
 		const status = e?.name === 'TokenExpiredError' ? 'expired' : 'invalid'
 		event.context.auth = { status }
 	}
