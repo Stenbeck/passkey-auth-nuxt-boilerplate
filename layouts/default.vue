@@ -4,7 +4,7 @@
 			<NuxtPage />
 		</div>
 		<div class="absolute bottom-6 left-4 sm:left-6">
-			<a href="https://github.com/users/stenbeck" class="flex space-x-4 items-center">
+			<a href="https://github.com/stenbeck/passkey-auth-nuxt-boilerplate" class="flex space-x-4 items-center">
 				<svg class="size-6 fill-[#24292F]" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
 					<path
 						fill-rule="evenodd"
