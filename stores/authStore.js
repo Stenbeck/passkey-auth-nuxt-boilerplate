@@ -5,13 +5,6 @@ export const useAuthStore = defineStore('auth', () => {
 	const fetching = ref(false)
 
 	// --- Session ---
-	// const fetchUser = async () => {
-	// 	const data = await $fetch('/api/auth/me', {
-	// 		credentials: 'include',
-	// 	})
-	// 	user.value = data.user
-	// }
-
 	const fetchUser = async () => {
 		if (fetching.value || user.value) return { success: !!user.value }
 

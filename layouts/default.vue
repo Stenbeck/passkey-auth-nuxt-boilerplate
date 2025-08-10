@@ -18,19 +18,3 @@
 		</div>
 	</div>
 </template>
-
-<script setup>
-import { onMounted } from 'vue'
-import { useAuthStore } from '@/stores/authStore'
-import { useCookie } from '#app'
-
-const auth = useAuthStore()
-
-onMounted(() => {
-	const isProd = process.env.NODE_ENV === 'production'
-	const cookieName = isProd ? '__Host-token' : 'token'
-
-	const token = useCookie(cookieName)
-	if (token.value && !auth.user) auth.fetchUser()
-})
-</script>
