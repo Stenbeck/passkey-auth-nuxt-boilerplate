@@ -1,14 +1,48 @@
 import { defineStore } from 'pinia'
+import { useCookie } from '#app'
 
 export const useAuthStore = defineStore('auth', () => {
 	const user = ref(null)
+	const fetching = ref(false)
 
 	// --- Session ---
+	// const fetchUser = async () => {
+	// 	const data = await $fetch('/api/auth/me', {
+	// 		credentials: 'include',
+	// 	})
+	// 	user.value = data.user
+	// }
+
 	const fetchUser = async () => {
-		const data = await $fetch('/api/auth/me', {
-			credentials: 'include',
-		})
-		user.value = data.user
+		// 1) undvik parallella anrop + hämta inte igen om redan satt
+		if (fetching.value || user.value) return { success: !!user.value }
+
+		// 2) anropa bara /me om token faktiskt finns (Safari-optimering)
+		const token = useCookie('token').value
+		if (!token) {
+			user.value = null
+			return { success: false, reason: 'no_token' }
+		}
+
+		fetching.value = true
+		try {
+			const data = await $fetch('/api/auth/me', { credentials: 'include' })
+
+			// robust mot olika svar: {authenticated,user} eller {user}
+			const u = data?.user ?? (data?.authenticated ? data : null)
+			if (u) {
+				user.value = u
+				return { success: true }
+			}
+
+			user.value = null
+			return { success: false, reason: 'unauthenticated' }
+		} catch {
+			user.value = null
+			return { success: false, reason: 'network' }
+		} finally {
+			fetching.value = false
+		}
 	}
 
 	const userExists = async (email) => {
@@ -25,10 +59,6 @@ export const useAuthStore = defineStore('auth', () => {
 
 	const setUser = (userData) => {
 		user.value = userData
-	}
-
-	const clear = () => {
-		user.value = null
 	}
 
 	// --- Registration ---
@@ -250,7 +280,6 @@ export const useAuthStore = defineStore('auth', () => {
 		getPasskeys,
 		deletePasskey,
 		setUser,
-		clear,
 	}
 })
 
