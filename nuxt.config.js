@@ -51,7 +51,7 @@ export default defineNuxtConfig({
 					name: 'twitter:description',
 					content: 'A secure Nuxt 3 boilerplate with passkey authentication, MongoDB, and Tailwind CSS.',
 				},
-				{ name: 'twitter:image', content: 'https://passkey.stenbecklab.com/social-preview.jpg' },
+				{ name: 'twitter:image', content: 'https://passkey.stenbecklab.com/winter_view.jpeg' },
 			],
 			link: [{ rel: 'canonical', href: 'https://passkey.stenbecklab.com' }],
 		},
