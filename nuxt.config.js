@@ -27,7 +27,7 @@ export default defineNuxtConfig({
 				{
 					name: 'description',
 					content:
-						'Secure and modern passkey authentication boilerplate built with Nuxt 3, MongoDB, and Tailwind CSS — perfect for starting secure web projects.',
+						'Secure and modern passkey authentication boilerplate built with Nuxt 3, MongoDB, and Tailwind CSS. Perfect for starting secure web projects.',
 				},
 				{
 					name: 'keywords',
