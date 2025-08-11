@@ -40,7 +40,7 @@ export default defineNuxtConfig({
 					property: 'og:description',
 					content: 'A secure Nuxt 3 boilerplate with passkey authentication, MongoDB, and Tailwind CSS.',
 				},
-				{ property: 'og:image', content: 'https://passkey.stenbecklab.com/winter_view.jpeg' },
+				{ property: 'og:image', content: 'https://passkey.stenbecklab.com/preview.jpg' },
 				{ property: 'og:url', content: 'https://passkey.stenbecklab.com' },
 				{ property: 'og:type', content: 'website' },
 				{ name: 'twitter:card', content: 'summary_large_image' },
@@ -49,7 +49,7 @@ export default defineNuxtConfig({
 					name: 'twitter:description',
 					content: 'A secure Nuxt 3 boilerplate with passkey authentication, MongoDB, and Tailwind CSS.',
 				},
-				{ name: 'twitter:image', content: 'https://passkey.stenbecklab.com/winter_view.jpeg' },
+				{ name: 'twitter:image', content: 'https://passkey.stenbecklab.com/preview.jpg' },
 			],
 			link: [
 				{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
