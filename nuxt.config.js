@@ -35,7 +35,6 @@ export default defineNuxtConfig({
 				},
 				{ name: 'author', content: 'Fredrik Stenbeck' },
 				{ name: 'robots', content: 'index, follow' },
-				// Open Graph
 				{ property: 'og:title', content: 'Passkey Boilerplate — Secure Nuxt 3 Starter' },
 				{
 					property: 'og:description',
@@ -44,7 +43,6 @@ export default defineNuxtConfig({
 				{ property: 'og:image', content: 'https://passkey.stenbecklab.com/social-preview.jpg' },
 				{ property: 'og:url', content: 'https://passkey.stenbecklab.com' },
 				{ property: 'og:type', content: 'website' },
-				// Twitter Card
 				{ name: 'twitter:card', content: 'summary_large_image' },
 				{ name: 'twitter:title', content: 'Passkey Boilerplate — Secure Nuxt 3 Starter' },
 				{
@@ -53,7 +51,11 @@ export default defineNuxtConfig({
 				},
 				{ name: 'twitter:image', content: 'https://passkey.stenbecklab.com/winter_view.jpeg' },
 			],
-			link: [{ rel: 'canonical', href: 'https://passkey.stenbecklab.com' }],
+			link: [
+				{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+				{ rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
+				{ rel: 'canonical', href: 'https://passkey.stenbecklab.com' },
+			],
 		},
 	},
 })
