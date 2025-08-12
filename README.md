@@ -2,7 +2,7 @@
 
 Nuxt 3 + Passkey + Magic Link Boilerplate
 
-A complete authentication boilerplate using **Passkeys** as the primary login method and **Magic Link (email-based)** as a secure fallback — built with Nuxt 3, MongoDB, internal server API and TailwindCSS.
+A complete authentication boilerplate using **Passkeys** as the primary login method and **Magic Link (email-based)** as a secure fallback for devices or browsers that do not support WebAuthn/Passkeys — built with Nuxt 3, MongoDB, internal server API and TailwindCSS.
 
 **DEMO**: https://passkey.stenbecklab.com
 
@@ -11,7 +11,7 @@ A complete authentication boilerplate using **Passkeys** as the primary login me
 ## ✨ Features
 
 - 🔐 **Passkey Login & Registration**
-- 📧 **Magic Link fallback authentication via email**
+- 📧 **Magic Link (email-based)** as a secure fallback for devices or browsers that do not support WebAuthn/Passkeys
 - 🍪 **Server-set, signed, short-lived, httpOnly cookies**
 - 💡 **Built with Nuxt 3 + Server API (Nitro) + MongoDB/Mongoose + TailwindCSS**
 - 🔗 **No built-in dependencies and very lightweight**
@@ -60,7 +60,8 @@ A complete authentication boilerplate using **Passkeys** as the primary login me
 
 ```
 /server/api/auth/        ← All server-side logic (register, login, verify)
-/server/middleware/      ← Rate-limiter and security-header middleware
+/server/middleware/      ← Server-side middleware (rate limiter, security headers etc.)
+/middleware/             ← Nuxt client-side route guard (e.g. check login status before showing page)
 /stores/                 ← Pinia authStore
 /plugins/                ← Get user if token exists and store is empty (instead of storing data in cookie or localstorage)
 /models/                 ← Mongoose schema for users and loginlogs
@@ -68,7 +69,6 @@ A complete authentication boilerplate using **Passkeys** as the primary login me
 /pages/                  ← Only index and dashbaord. Index is the login page and dashboard is a placeholder when logged in
 /pages/auth/             ← Only a /callback route for Magic Link to automatically retirect when verified
 /components/             ← UI elements
-/middleware/             ← Route guard to only show restricted pages for loggedin users
 
 ```
 
