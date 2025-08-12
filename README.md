@@ -6,6 +6,8 @@ A complete authentication boilerplate using **Passkeys** as the primary login me
 
 **DEMO**: https://passkey.stenbecklab.com
 
+![Preview of Passkey Boilerplate](./public/preview.jpg)
+
 ---
 
 ## ✨ Features
