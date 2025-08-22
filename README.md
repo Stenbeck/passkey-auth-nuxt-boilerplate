@@ -123,8 +123,7 @@ Visit `http://localhost:3000`
 
 ## 🧭 Future Ideas
 
-- Admin UI for managing users and passkeys
-- Rate limiting & brute force protection
+- Admin UI for managing users
 - Richer design and UX polish
 
 ---
